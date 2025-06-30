@@ -1,33 +1,126 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ポモドーロタイマー</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <title>ゆめかわポモドーロタイマー</title>
+  <link href="https://fonts.googleapis.com/css2?family=Kiwi+Maru&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Kiwi Maru', cursive;
+      background: linear-gradient(to right, #fce4ec, #e3f2fd);
+      color: #555;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    .timer {
+      font-size: 5em;
+      margin: 20px;
+      color: #ff80ab;
+      text-shadow: 2px 2px #fff;
+    }
+
+    .controls button {
+      font-family: 'Kiwi Maru', cursive;
+      font-size: 1.2em;
+      margin: 10px;
+      padding: 10px 25px;
+      border: none;
+      border-radius: 20px;
+      background: #ffb6c1;
+      color: white;
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .controls button:hover {
+      background: #f48fb1;
+    }
+
+    .settings {
+      margin-top: 20px;
+    }
+
+    .settings label {
+      font-size: 1em;
+      margin-right: 5px;
+    }
+
+    .settings input {
+      width: 50px;
+      padding: 5px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>ポモドーロタイマー</h1>
-        <div class="timer-container">
-            <div id="timer" class="timer">25:00</div>
-            <div class="controls">
-                <button id="start" class="btn">開始</button>
-                <button id="stop" class="btn">停止</button>
-                <button id="reset" class="btn">リセット</button>
-            </div>
-        </div>
-        <div class="settings">
-            <div class="setting-item">
-                <label>作業時間:</label>
-                <input type="number" id="workTime" value="25" min="1" max="60">分
-            </div>
-            <div class="setting-item">
-                <label>休憩時間:</label>
-                <input type="number" id="breakTime" value="5" min="1" max="60">分
-            </div>
-        </div>
-    </div>
-    <script src="script.js"></script>
+  <h1>ゆめかわポモドーロ🎀</h1>
+  <div class="timer" id="timer">25:00</div>
+  <div class="controls">
+    <button onclick="startTimer()">開始</button>
+    <button onclick="stopTimer()">停止</button>
+    <button onclick="resetTimer()">リセット</button>
+  </div>
+  <div class="settings">
+    <label>作業：<input type="number" id="workTime" value="25" min="1" max="60"> 分</label>
+    <label>休憩：<input type="number" id="breakTime" value="5" min="1" max="60"> 分</label>
+  </div>
+
+  <script>
+    let timerDisplay = document.getElementById('timer');
+    let workInput = document.getElementById('workTime');
+    let breakInput = document.getElementById('breakTime');
+
+    let timer;
+    let isWorking = true;
+    let timeLeft = 25 * 60;
+
+    function updateDisplay() {
+      const min = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+      const sec = String(timeLeft % 60).padStart(2, '0');
+      timerDisplay.textContent = `${min}:${sec}`;
+    }
+
+    function startTimer() {
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        updateDisplay();
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          isWorking = !isWorking;
+          timeLeft = (isWorking ? workInput.value : breakInput.value) * 60;
+          startTimer();
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(timer);
+    }
+
+    function resetTimer() {
+      clearInterval(timer);
+      isWorking = true;
+      timeLeft = workInput.value * 60;
+      updateDisplay();
+    }
+
+    updateDisplay();
+  </script>
 </body>
 </html>
